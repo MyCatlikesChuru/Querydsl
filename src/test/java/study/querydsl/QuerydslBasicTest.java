@@ -253,4 +253,42 @@ public class QuerydslBasicTest {
         assertThat(teamB.get(team.name)).isEqualTo("teamB");
         assertThat(teamB.get(member.age.avg())).isEqualTo(35); // (30+40) / 2
     }
+
+    /*
+    * 팀 A에 소속된 모든 회원 조인
+    * */
+    @Test
+    public void join(){
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.team, team)
+                .where(team.name.eq("teamA"))
+                .fetch();
+
+        assertThat(result)
+                .extracting("username")
+                .containsExactly("member1","member2");
+    }
+
+    /*
+    * 세타 조인 (연관관계가 없는 엔티티도 조인이 가능하다 !!)
+    * 회원의 이름이 팀 이름과 같은 회원 조회
+    * 제약 : 외부 조인이 불가능 (LeftOut, RightOut Join)
+    * */
+    @Test
+    public void theta_join(){
+        em.persist(new Member("teamA")); // 멤버이름을 teamA
+        em.persist(new Member("teamB")); // 멤버이름을 teamB
+        em.persist(new Member("teamC")); // 멤버이름을 teamC
+
+        List<Member> result = queryFactory
+                .select(member)
+                .from(member, team)
+                .where(member.username.eq(team.name))
+                .fetch();
+
+        assertThat(result)
+                .extracting("username")
+                .containsExactly("teamA","teamB");
+    }
 }
