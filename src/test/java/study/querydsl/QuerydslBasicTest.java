@@ -13,6 +13,8 @@ import study.querydsl.entity.QMember;
 import study.querydsl.entity.Team;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import java.util.List;
 
@@ -337,5 +339,45 @@ public class QuerydslBasicTest {
         for (Tuple tuple : result) {
             System.out.println("tuple = " + tuple); // 멤버이름과 팀이름이 같은 조건 7,8번은 값이 존재
         }
+    }
+
+    /*
+    * fetchJoin 미적용
+    * */
+    @PersistenceUnit
+    EntityManagerFactory emf;
+
+    @Test
+    public void fetchJoinNo(){
+        // 영속성 컨텍스트 초기화
+        em.flush();
+        em.clear();
+
+        Member findMember = queryFactory
+                .selectFrom(member) // team은 조회안됨 Lazy
+                .where(member.username.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam());
+        assertThat(loaded).as("패치 조인 미적용").isFalse();
+    }
+
+    /*
+    * fetchJoin 적용
+    * */
+    @Test
+    public void fetchJoinUse(){
+        // 영속성 컨텍스트 초기화
+        em.flush();
+        em.clear();
+
+        Member findMember = queryFactory
+                .selectFrom(member)
+                .join(member.team, team).fetchJoin() // team도 조회됨
+                .where(member.username.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam());
+        assertThat(loaded).as("패치 조인 적용").isTrue();
     }
 }
