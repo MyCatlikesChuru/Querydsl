@@ -3,16 +3,13 @@ package study.querydsl;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.QMember;
-import study.querydsl.entity.QTeam;
 import study.querydsl.entity.Team;
 
 import javax.persistence.EntityManager;
@@ -73,85 +70,85 @@ public class QuerydslBasicTest {
 
     // 파라미터 바인딩을 자동으로 해결해준다 !!
     // 컴파일시 에러를 잡아준다 !!
-//    @Test
-//    public void startQuerydsl1(){
-//        System.out.println("=======startQuerydsl1======");
-//        QMember m = new QMember("m");
-//
-//        Member findMember = queryFactory
-//                .select(m)
-//                .from(m)
-//                .where(m.username.eq("member1")) // 파라미터 바인딩 처리
-//                .fetchOne();
-//
-//        assertThat(findMember.getUsername()).isEqualTo("member1");
-//        System.out.println("=======startQuerydsl1======");
-//    }
+    @Test
+    public void startQuerydsl1(){
+        System.out.println("=======startQuerydsl1======");
+        QMember m = new QMember("m");
+
+        Member findMember = queryFactory
+                .select(m)
+                .from(m)
+                .where(m.username.eq("member1")) // 파라미터 바인딩 처리
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+        System.out.println("=======startQuerydsl1======");
+    }
 
     // 코드 줄이기
     // 권장하는 코드
-//    @Test
-//    public void startQuerydsl2(){
-//
-//        Member findMember = queryFactory
-//                .select(member) // <- Q 타입은 static import할 것
-//                .from(member)
-//                .where(member.username.eq("member1")) // 파라미터 바인딩 처리
-//                .fetchOne();
-//
-//        assertThat(findMember.getUsername()).isEqualTo("member1");
-//    }
-//
-//    @Test
-//    public void search(){
-//        Member findMember = queryFactory
-//                .selectFrom(member)
-//                .where(member.username.eq("member1")
-//                        .and(member.age.eq(10)))
-//                .fetchOne();
-//
-//        assertThat(findMember.getUsername()).isEqualTo("member1");
-//    }
+    @Test
+    public void startQuerydsl2(){
 
-//    @Test
-//    public void resultFetch(){
-//        // List
-//        System.out.println("=============List=============");
-//        List<Member> fetch = queryFactory
+        Member findMember = queryFactory
+                .select(member) // <- Q 타입은 static import할 것
+                .from(member)
+                .where(member.username.eq("member1")) // 파라미터 바인딩 처리
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void search(){
+        Member findMember = queryFactory
+                .selectFrom(member)
+                .where(member.username.eq("member1")
+                        .and(member.age.eq(10)))
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void resultFetch(){
+        // List
+        System.out.println("=============List=============");
+        List<Member> fetch = queryFactory
+                .selectFrom(member)
+                .fetch();
+        System.out.println("=============List=============");
+
+        // 단 건 -> 결과가 둘이상이면 NonUniqueResultException 발생
+//        System.out.println("=============단 건=============");
+//        Member fetchOne = queryFactory
 //                .selectFrom(member)
-//                .fetch();
-//        System.out.println("=============List=============");
-//
-//        // 단 건 -> 결과가 둘이상이면 NonUniqueResultException 발생
-////        System.out.println("=============단 건=============");
-////        Member fetchOne = queryFactory
-////                .selectFrom(member)
-////                .fetchOne();
-////        System.out.println("=============단 건=============");
-//
-//        // 처음 한 건 조회
-//        System.out.println("=============처음 한 건 조회=============");
-//        Member fetchFirst = queryFactory
-//                .selectFrom(member)
-//                .fetchFirst();// = limit(1).fetchOne(); 같은코드다
-//        System.out.println("=============처음 한 건 조회=============");
-//
-//        // 페이징에서 사용
-//        System.out.println("=============페이징에서 사용=============");
-//        QueryResults<Member> results = queryFactory
-//                .selectFrom(member)
-//                .fetchResults();
-//
-//        // count 쿼리로 변경
-//        results.getTotal();
-//        List<Member> content = results.getResults();
-//        System.out.println("=============페이징에서 사용=============");
-//
-//        long count = queryFactory
-//                .selectFrom(member)
-//                .fetchCount();
-//
-//    }
+//                .fetchOne();
+//        System.out.println("=============단 건=============");
+
+        // 처음 한 건 조회
+        System.out.println("=============처음 한 건 조회=============");
+        Member fetchFirst = queryFactory
+                .selectFrom(member)
+                .fetchFirst();// = limit(1).fetchOne(); 같은코드다
+        System.out.println("=============처음 한 건 조회=============");
+
+        // 페이징에서 사용
+        System.out.println("=============페이징에서 사용=============");
+        QueryResults<Member> results = queryFactory
+                .selectFrom(member)
+                .fetchResults();
+
+        // count 쿼리로 변경
+        results.getTotal();
+        List<Member> content = results.getResults();
+        System.out.println("=============페이징에서 사용=============");
+
+        long count = queryFactory
+                .selectFrom(member)
+                .fetchCount();
+
+    }
 
 
     /*
@@ -290,5 +287,55 @@ public class QuerydslBasicTest {
         assertThat(result)
                 .extracting("username")
                 .containsExactly("teamA","teamB");
+    }
+
+    /*
+    * 회원과 팀을 Join, Team 이름이 teamA인 팀만 Join 회원은 모두 조회
+    * JPQL : select m, t from Member m left join m.team t on t.name = 'teamA'
+    * */
+    @Test
+    public void join_on_filtering(){
+        List<Tuple> result1 = queryFactory
+                .select(member, team) // Tuple로 나온이유는 select 타입이 여러개이기때문
+                .from(member)
+                .leftJoin(member.team, team).on(team.name.eq("teamA")) // 내부 조인일 경우 on절이 의미있다.
+                .fetch();
+
+        // member3,4가 Null로 생김
+        for (Tuple tuple : result1) {
+            System.out.println("result1 tuple = " + tuple);
+        }
+
+        List<Tuple> result2 = queryFactory
+                .select(member, team) // Tuple로 나온이유는 select 타입이 여러개이기때문
+                .from(member)
+                .join(member.team, team).on(team.name.eq("teamA")) // = 결과가 where(team.name.eq("teamA")) 와 같다.
+                .fetch();
+
+        // member3,4가 없어짐
+        for (Tuple tuple : result2) {
+            System.out.println("result2 tuple = " + tuple);
+        }
+    }
+
+    /*
+    * 연관관계가 없는 엔티티를 외부 조인
+    * 회원의 이름과 팀이림이 같은 대상을 외부 조인
+    * */
+    @Test
+    public void join_on_no_relation(){
+        em.persist(new Member("teamA")); // 멤버이름을 teamA
+        em.persist(new Member("teamB")); // 멤버이름을 teamB
+        em.persist(new Member("teamC")); // 멤버이름을 teamC
+
+        List<Tuple> result = queryFactory
+                .select(member, team)
+                .from(member)
+                .leftJoin(team).on(member.username.eq(team.name)) // member.team이 아닌 막조인을 함
+                .fetch();
+
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple); // 멤버이름과 팀이름이 같은 조건 7,8번은 값이 존재
+        }
     }
 }
