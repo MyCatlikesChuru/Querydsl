@@ -18,6 +18,7 @@ public class MemberJpaRepository {
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
+    // Bean 으로 등록된 JPAQueryFactory를 DI하여 사용할 수 있다.
     public MemberJpaRepository(EntityManager em) {
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
